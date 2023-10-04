@@ -28,8 +28,6 @@ std::string Comando::comando_string()
         return "Escolheu ETIRPS";
     case MEET:
         return "Escolheu MEET";
-    case CONFIRM:
-        return "Compra realizada com sucesso!";
     default:
         return "Não consegui identificar a opção";
     }
@@ -66,12 +64,6 @@ Comandos Comando::wait_for_comando()
         {
             if (!(this->comando == DEV)) {
                 return DEV;
-            }
-        }
-        if ((*data >> 9U) & 1U) // SW 1 are CONFIRM
-        {
-            if (!(this->comando == CONFIRM)) {
-                return CONFIRM;
             }
         }
     }

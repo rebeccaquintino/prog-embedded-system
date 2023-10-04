@@ -10,14 +10,10 @@ inline std::string S000::estado_string()
 void S000::init(Maquina *mech)
 {
     mech->display->clear();
-    if (mech->comando_->comando != DEV && mech->comando_->comando != CONFIRM) {
+    if (mech->comando_->comando != DEV) {
         mech->display->print_display(estado_string_, moeda_, troco_);
-    } else if(mech->comando_->comando == CONFIRM) {
+    } else if(mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET") {
         mech->refrigerante_ = "Ainda não escolhido";
-        setLine(0);
-        printString("Bebida disponível : ");
-        setLine(1);
-        printString("Obrigada!");
     }
 }
 void S000::exit(Maquina *mech)
@@ -316,6 +312,12 @@ void S150::init(Maquina *mech)
 {
     mech->display->clear();
     mech->display->print_display(estado_string_, moeda_, troco_);
+    if (mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET"){
+        mech->estado_atual_ = &S000::estado_instance();
+        mech->display->clear();
+        setLine(0);
+        printString("Pegue sua Bebida!");
+    }
     troco_ = 0.0f;
 }
 void S150::exit(Maquina *mech)
@@ -352,14 +354,6 @@ void S150::proximo_estado(Maquina *mech)
         break;
     case MEET:
         mech->refrigerante_ = "MEET";
-        break;
-    case CONFIRM:
-        if (mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET") {
-            mech->estado_atual_ = &S000::estado_instance();
-        } else{
-            setLine(3);
-            printString("Escolha uma opção de bebida");
-        }
         break;
     }
 }
