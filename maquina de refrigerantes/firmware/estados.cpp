@@ -1,3 +1,4 @@
+#include "Oled.h"
 #include "estados.h"
 #include "maquina_refrigerante.h"
 #include <string>
@@ -9,8 +10,15 @@ inline std::string S000::estado_string()
 void S000::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    if (mech->comando_->comando != DEV && mech->comando_->comando != CONFIRM) {
+        mech->display->print_display(estado_string_, moeda_, troco_);
+    } else if(mech->comando_->comando == CONFIRM) {
+        mech->refrigerante_ = "Ainda não escolhido";
+        setLine(0);
+        printString("Bebida disponível : ");
+        setLine(1);
+        printString("Obrigada!");
+    }
 }
 void S000::exit(Maquina *mech)
 {
@@ -35,6 +43,8 @@ void S000::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -44,7 +54,7 @@ void S000::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S000::estado_instance()
+Estado &S000::estado_instance()
 {
     static S000 estado_instance;
     return estado_instance;
@@ -82,6 +92,8 @@ void S025::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -91,7 +103,7 @@ void S025::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S025::estado_instance()
+Estado &S025::estado_instance()
 {
     static S025 estado_instance;
     return estado_instance;
@@ -129,6 +141,8 @@ void S050::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -138,7 +152,7 @@ void S050::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S050::estado_instance()
+Estado &S050::estado_instance()
 {
     static S050 estado_instance;
     return estado_instance;
@@ -177,6 +191,8 @@ void S075::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -186,7 +202,7 @@ void S075::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S075::estado_instance()
+Estado &S075::estado_instance()
 {
     static S075 estado_instance;
     return estado_instance;
@@ -225,6 +241,8 @@ void S100::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -234,7 +252,7 @@ void S100::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S100::estado_instance()
+Estado &S100::estado_instance()
 {
     static S100 estado_instance;
     return estado_instance;
@@ -274,6 +292,8 @@ void S125::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -283,7 +303,7 @@ void S125::proximo_estado(Maquina *mech)
         break;
     }
 }
-IEstado &S125::estado_instance()
+Estado &S125::estado_instance()
 {
     static S125 estado_instance;
     return estado_instance;
@@ -324,6 +344,8 @@ void S150::proximo_estado(Maquina *mech)
         break;
     case DEV:
         troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
         mech->refrigerante_ = "ETIRPS";
@@ -331,9 +353,17 @@ void S150::proximo_estado(Maquina *mech)
     case MEET:
         mech->refrigerante_ = "MEET";
         break;
+    case CONFIRM:
+        if (mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET") {
+            mech->estado_atual_ = &S000::estado_instance();
+        } else{
+            setLine(3);
+            printString("Escolha uma opção de bebida");
+        }
+        break;
     }
 }
-IEstado &S150::estado_instance()
+Estado &S150::estado_instance()
 {
     static S150 estado_instance;
     return estado_instance;

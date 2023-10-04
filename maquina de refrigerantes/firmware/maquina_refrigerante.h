@@ -5,13 +5,13 @@
 #include <iostream>
 #include <ostream>
 
-class IEstado;
+class Estado;
 
 class Maquina 
 {
   public:
     std::string refrigerante_;
-    IEstado *estado_atual_;
+    Estado *estado_atual_;
     Comando *comando_;
     Oled *display;
     Maquina();

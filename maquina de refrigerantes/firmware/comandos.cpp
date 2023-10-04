@@ -15,19 +15,21 @@ std::string Comando::comando_string()
     switch (comando)
     {
     case NADA:
-        return "Nenhuma moeda";
+        return "Inseriu nada";
     case M025:
-        return "Inserir 25 centavos";
+        return "Inseriu 25 centavos";
     case M050:
-        return "Inserir 50 centavos";
+        return "Inseriu 50 centavos";
     case M100:
-        return "Inserir 1 real";
+        return "Inseriu 1 real";
     case DEV:
-        return "Devolução";
+        return "Devolveu";
     case ETIRPS:
-        return "ETIRPS";
+        return "Escolheu ETIRPS";
     case MEET:
-        return "MEET";
+        return "Escolheu MEET";
+    case CONFIRM:
+        return "Compra realizada com sucesso!";
     default:
         return "Não consegui identificar a opção";
     }
@@ -37,32 +39,40 @@ Comandos Comando::wait_for_comando()
 {
     while (true)
     {
-        /* Keys are mapped to GPIO bits 16 to 20 
-           Switches SW0 to SW5 are mapped to GPIO bits 8 to 13 */
+        /* Keys are mapped to GPIO bits 17 to 21 
+           Switches SW0 to SW5 are mapped to GPIO bits 9 to 14 */
 
-        if ((*data >> 15U) & 1U) // KEY 1 are M025
+        if ((*data >> 16U) & 1U) // BTNU are M025
         {
             return M025;
         }
-        if ((*data >> 16U) & 1U) // KEY 2 are M050
+        if ((*data >> 17U) & 1U) // BTNL are M050
         {
             return M050;
         }
-        if ((*data >> 17U) & 1U) // KEY 3 are M100
+        if ((*data >> 18U) & 1U) // BTND are M100
         {
             return M100;
         }
-        if ((*data >> 18U) & 1U) // KEY 4 are ETIRPS drink
+        if ((*data >> 19U) & 1U) // BTNR are ETIRPS drink
         {
             return ETIRPS;
         }
-        if ((*data >> 19U) & 1U) // KEY 5 are MEET drink
+        if ((*data >> 20U) & 1U) // BTNC are MEET drink
         {
             return MEET;
         }
-        if ((*data >> 7U)  & 1U) // SW 1 are DEV
+        if ((*data >> 8U) & 1U) // SW 0 are DEV
         {
-            return DEV;
+            if (!(this->comando == DEV)) {
+                return DEV;
+            }
+        }
+        if ((*data >> 9U) & 1U) // SW 1 are CONFIRM
+        {
+            if (!(this->comando == CONFIRM)) {
+                return CONFIRM;
+            }
         }
     }
 }
