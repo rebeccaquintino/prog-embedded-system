@@ -10,10 +10,16 @@ inline std::string S000::estado_string()
 void S000::init(Maquina *mech)
 {
     mech->display->clear();
-    if (mech->comando_->comando != DEV) {
+    if (mech->comando_->comando != DEV && mech->comando_->comando != NADA) {
         mech->display->print_display(estado_string_, moeda_, troco_);
-    } else if(mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET") {
+    } else if((mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET")  && (mech->comando_->comando != NADA)){
         mech->refrigerante_ = "Ainda não escolhido";
+        clock_t start_time = clock();
+        clock_t end_time =  5UL + start_time;
+        while(clock() != end_time);
+        mech->display->clear();
+        printString("Escolha sua bebida!");
+
     }
 }
 void S000::exit(Maquina *mech)
@@ -317,6 +323,7 @@ void S150::init(Maquina *mech)
         mech->display->clear();
         setLine(0);
         printString("Pegue sua Bebida!");
+        mech->comando_->comando = NADA;
     }
     troco_ = 0.0f;
 }
