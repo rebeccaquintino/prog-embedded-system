@@ -28,14 +28,12 @@ class S000 : public Estado
     S000()
     {
         moeda_ = 0.0f;
-        troco_ = 0.0f;
         estado_string_ = "R$ 0.00";
     }
     S000(const S000 &other);
     S000 &operator=(const S000 &other);
-
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };
 
@@ -52,13 +50,12 @@ class S025 : public Estado
     S025()
     {
         moeda_ = 0.25f;
-        troco_ = 0.0f;
         estado_string_ = "R$ 0.25";
     }
     S025(const S025 &other);
     S025 &operator=(const S025 &other);
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };
 
@@ -74,14 +71,13 @@ class S050 : public Estado
   private:
     S050()
     {
-        moeda_ = 0.50f;
-        troco_ = 0.0f;
+        moeda_ = 0.50f;         
         estado_string_ = "R$ 0.50";
     }
     S050(const S050 &other);
     S050 &operator=(const S050 &other);
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };
 
@@ -97,14 +93,13 @@ class S075 : public Estado
   private:
     S075()
     {
-        moeda_ = 0.75f;
-        troco_ = 0.0f;
+        moeda_ = 0.75f;          
         estado_string_ = "R$ 0.75";
     }
     S075(const S075 &other);
     S075 &operator=(const S075 &other);
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };
 
@@ -120,13 +115,12 @@ class S100 : public Estado
   private:
     S100()
     {
-        moeda_ = 1.00f;
-        troco_ = 0.0f;
+        moeda_ = 1.00f;          
         estado_string_ = "R$ 1.00";
     }
     S100(const S100 &other);
     S100 &operator=(const S100 &other);
-    float troco_;
+     
     float moeda_;
     std::string estado_string_;
 };
@@ -142,14 +136,13 @@ class S125 : public Estado
   private:
     S125()
     {
-        moeda_ = 1.25f;
-        troco_ = 0.0f;
+        moeda_ = 1.25f;          
         estado_string_ = "R$ 1.25";
     }
     S125(const S125 &other);
     S125 &operator=(const S125 &other);
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };
 class S150 : public Estado
@@ -164,13 +157,12 @@ class S150 : public Estado
   private:
     S150()
     {
-        moeda_ = 1.50f;
-        troco_ = 0.0f;
+        moeda_ = 1.50f;       
         estado_string_ = "R$ 1.50";
     }
     S150(const S150 &other);
     S150 &operator=(const S150 &other);
     float moeda_;
-    float troco_;
+     
     std::string estado_string_;
 };

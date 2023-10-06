@@ -9,7 +9,7 @@ int main()
     Maquina soda_Maquina;
     soda_Maquina.display->init();
     soda_Maquina.display->clear();
-    std::string mensagem_inicial = "Insira dinheiro aqui";
+    std::string mensagem_inicial = "dinheiro aqui";
     printString((char *)mensagem_inicial.c_str());
 
     while (true)

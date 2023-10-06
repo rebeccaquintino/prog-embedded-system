@@ -2,6 +2,8 @@
 #include "estados.h"
 #include "maquina_refrigerante.h"
 #include <string>
+#include <time.h>
+#include <sstream> 
 
 inline std::string S000::estado_string()
 {
@@ -9,22 +11,27 @@ inline std::string S000::estado_string()
 }
 void S000::init(Maquina *mech)
 {
+    std::stringstream ss;
     mech->display->clear();
     if (mech->comando_->comando != DEV && mech->comando_->comando != NADA) {
-        mech->display->print_display(estado_string_, moeda_, troco_);
-    } else if((mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET")  && (mech->comando_->comando != NADA)){
-        mech->refrigerante_ = "Ainda não escolhido";
+        mech->display->print_display(estado_string_, moeda_, mech->troco_);
+    } else if((mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET")  && (mech->comando_->comando == NADA)){
+    	setLine(0);
+        ss << "Bebida " << mech->refrigerante_;
+        printString((char*) ss.str().c_str());
+        
         clock_t start_time = clock();
-        clock_t end_time =  5UL + start_time;
+        clock_t end_time =  (2UL * CLOCKS_PER_SEC) + start_time;
         while(clock() != end_time);
         mech->display->clear();
-        printString("Escolha sua bebida!");
-
+        mech->refrigerante_ = "Nao escolhido";
+        mech->comando_->comando = NADA;
+        mech->estado_atual_->init(mech);
     }
 }
 void S000::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S000::proximo_estado(Maquina *mech)
@@ -32,7 +39,6 @@ void S000::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S025::estado_instance();
@@ -44,8 +50,8 @@ void S000::proximo_estado(Maquina *mech)
         mech->estado_atual_ = &S100::estado_instance();
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -68,12 +74,11 @@ inline std::string S025::estado_string()
 void S025::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
 }
 void S025::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S025::proximo_estado(Maquina *mech)
@@ -81,7 +86,6 @@ void S025::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S050::estado_instance();
@@ -93,8 +97,8 @@ void S025::proximo_estado(Maquina *mech)
         mech->estado_atual_ = &S125::estado_instance();
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -117,12 +121,11 @@ inline std::string S050::estado_string()
 void S050::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
 }
 void S050::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S050::proximo_estado(Maquina *mech)
@@ -130,7 +133,6 @@ void S050::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S075::estado_instance();
@@ -142,8 +144,8 @@ void S050::proximo_estado(Maquina *mech)
         mech->estado_atual_ = &S150::estado_instance();
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -166,12 +168,11 @@ inline std::string S075::estado_string()
 void S075::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
 }
 void S075::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S075::proximo_estado(Maquina *mech)
@@ -179,7 +180,6 @@ void S075::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S100::estado_instance();
@@ -189,11 +189,11 @@ void S075::proximo_estado(Maquina *mech)
         break;
     case M100:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.25f;
+        mech->troco_ = 0.25f;
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -216,12 +216,11 @@ inline std::string S100::estado_string()
 void S100::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
 }
 void S100::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S100::proximo_estado(Maquina *mech)
@@ -229,7 +228,6 @@ void S100::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S125::estado_instance();
@@ -239,11 +237,11 @@ void S100::proximo_estado(Maquina *mech)
         break;
     case M100:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.50f;
+        mech->troco_ = 0.50f;
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -266,12 +264,11 @@ inline std::string S125::estado_string()
 void S125::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
-    troco_ = 0.0f;
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
 }
 void S125::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S125::proximo_estado(Maquina *mech)
@@ -279,22 +276,21 @@ void S125::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S150::estado_instance();
         break;
     case M050:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.25f;
+        mech->troco_ = 0.25f;
         break;
     case M100:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.75f;
+        mech->troco_ = 0.75f;
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:
@@ -317,19 +313,20 @@ inline std::string S150::estado_string()
 void S150::init(Maquina *mech)
 {
     mech->display->clear();
-    mech->display->print_display(estado_string_, moeda_, troco_);
+    mech->display->print_display(estado_string_, moeda_, mech->troco_);
     if (mech->refrigerante_ == "ETIRPS" || mech->refrigerante_ == "MEET"){
         mech->estado_atual_ = &S000::estado_instance();
         mech->display->clear();
         setLine(0);
-        printString("Pegue sua Bebida!");
+        printString("Pegue!");
         mech->comando_->comando = NADA;
+        mech->estado_atual_->init(mech);
     }
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
 }
 void S150::exit(Maquina *mech)
 {
-    troco_ = 0.0f;
+    mech->troco_ = 0.0f;
     mech->display->clear();
 }
 void S150::proximo_estado(Maquina *mech)
@@ -337,23 +334,22 @@ void S150::proximo_estado(Maquina *mech)
     switch (mech->comando_->comando)
     {
     case NADA:
-        troco_ = 0.0f;
         break;
     case M025:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.25f;
+        mech->troco_ = 0.25f;
         break;
     case M050:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 0.50f;
+        mech->troco_ = 0.50f;
         break;
     case M100:
         mech->estado_atual_ = &S150::estado_instance();
-        troco_ = 1.00f;
+        mech->troco_ = 1.00f;
         break;
     case DEV:
-        troco_ = moeda_;
-        mech->display->print_display("R$ 0.00", 0.0f, troco_);
+        mech->troco_ = moeda_;
+        mech->display->print_display("R$ 0.00", 0.0f, mech->troco_);
         mech->estado_atual_ = &S000::estado_instance();
         break;
     case ETIRPS:

@@ -15,21 +15,21 @@ std::string Comando::comando_string()
     switch (comando)
     {
     case NADA:
-        return "Inseriu nada";
+        return "Pegue!";
     case M025:
-        return "Inseriu 25 centavos";
+        return "25 centavos";
     case M050:
-        return "Inseriu 50 centavos";
+        return "50 centavos";
     case M100:
-        return "Inseriu 1 real";
+        return "1 real";
     case DEV:
         return "Devolveu";
     case ETIRPS:
-        return "Escolheu ETIRPS";
+        return "ETIRPS";
     case MEET:
-        return "Escolheu MEET";
+        return "MEET";
     default:
-        return "Não consegui identificar a opção";
+        return "Sem opção";
     }
 }
 

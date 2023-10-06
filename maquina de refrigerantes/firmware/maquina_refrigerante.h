@@ -11,6 +11,7 @@ class Maquina
 {
   public:
     std::string refrigerante_;
+    float troco_;
     Estado *estado_atual_;
     Comando *comando_;
     Oled *display;

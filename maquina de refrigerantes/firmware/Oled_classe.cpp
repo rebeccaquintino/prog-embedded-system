@@ -25,7 +25,7 @@ void Oled::print_display(std::string refrigerante, float saldo, float troco)
 
     this->clear();
 
-    refrigerante_stream << "Refrigerante: " << refrigerante;
+    refrigerante_stream << "Bebida: " << refrigerante;
     setLine(0);
     printString((char *)refrigerante_stream.str().c_str());
 
