@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "../clockCalendar/clockCalendar.hpp" // Assuming the correct path to the header file
+#include "../clockcalendar/clockCalendar.hpp" // Assuming the correct path to the header file
 
 // Implementation of the Clock class
 Clock::Clock(int h, int s, int m, int pm){

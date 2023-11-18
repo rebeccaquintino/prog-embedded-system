@@ -78,7 +78,6 @@ void RFID::read_tag() {
     if ((status != MFRC522::STATUS_OK) || (wrongId)) {
         // Reading failed or incorrect ID, print error message and indicate failure
         Serial.println(F("Door did not open."));
-        Serial.println();
         digitalWrite(LEDR_PIN, HIGH);
         delay(1000);
         digitalWrite(LEDR_PIN, LOW);
