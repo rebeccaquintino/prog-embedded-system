@@ -2,15 +2,23 @@
 #include <MFRC522.h>
 #include "devices/peripherals/peripherals.hpp"
 
-#define SS_PIN          21
-#define RST_PIN         22
+// Define the SS_PIN and RST_PIN for the RFID module
+#define SS_PIN 21
+#define RST_PIN 22
 
+/* RFID class */
 class RFID {
-    public:
-        MFRC522 reader;
-        RFID(int ss_pin, int rst_pin) : reader(ss_pin, rst_pin){}
-        void read_tag();   
-        void write_tag();
-        void init();
-        void handle_events(Peripherals *btn_or_keyboard);
-};  
+public:
+    // RFID reader object
+    MFRC522 reader;
+    // Constructor for initializing the RFID reader
+    RFID(int ss_pin, int rst_pin) : reader(ss_pin, rst_pin) {}
+    // Function to read a RFID tag
+    void read_tag();
+    // Function to write to a RFID tag
+    void write_tag();
+    // Function to initialize the RFID module
+    void init();
+    // Function to handle events based on RFID input and other peripherals
+    void handle_events(Peripherals *btn_or_keyboard);
+};

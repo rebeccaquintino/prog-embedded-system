@@ -8,48 +8,49 @@
 #include "devices/peripherals/peripherals.hpp"
 #include "devices/queue/queue.hpp"
 
-/* Instancias dos periféricos */
-Keyboard kb;
-Button btn;
-RFID rf(SS_PIN, RST_PIN);
+/* Peripheral instances */
+Keyboard kb;    // Instance of the keyboard peripheral
+Button btn;     // Instance of the button peripheral
+RFID rf(SS_PIN, RST_PIN);   // Instance of the RFID peripheral
 
 void setup() {
-   // Inicia a serial
-  Serial.begin(9600);
-  SPI.begin(); // Init SPI bus
-  rf.init();
-  kb.init();
-  btn.init();
+  Serial.begin(9600);   // Initialize serial communication
+  SPI.begin();          // Initialize SPI bus
+  rf.init();            // Initialize RFID
+  kb.init();            // Initialize keyboard
+  btn.init();           // Initialize button
 }
 
 void loop() {
-  char read = kb.keypad.getKey();
+  char read = kb.keypad.getKey();  // Read a key from the keyboard
 
-  
+  // Check if a new RFID card is present and read its serial if available
   if (rf.reader.PICC_IsNewCardPresent() && rf.reader.PICC_ReadCardSerial()) {
-      rf.read_tag();
-      delay(2000);
-      Serial.println();
-      Serial.println("1) Para abertura da porta aproxime a TAG do leitor");
-      Serial.println("2) Para cadastramento de cartoes, pressione qualquer tecla");
-      Serial.println();
-  } 
-  else if(btn_intr) {             //verifica se senha está correta ou o botão está ativado
-          rf.handle_events(&btn);
-          btn_intr = false;
-          Serial.println();
-          Serial.println("1) Para abertura da porta aproxime a TAG do leitor");
-          Serial.println("2) Para cadastramento de cartoes, pressione qualquer tecla");
-          Serial.println();
-        } else if(read != NULL){
-            rf.handle_events(&kb);
-            Serial.println();
-            Serial.println("1) Para abertura da porta aproxime a TAG do leitor");
-            Serial.println("2) Para cadastramento de cartoes, pressione qualquer tecla");
-            Serial.println();
-        }
-  // instrui o PICC quando no estado ACTIVE a ir para um estado de "parada"
+    rf.read_tag();   // Read RFID tag details
+    delay(2000);
+    Serial.println();
+    Serial.println("1) To open the door, approach the TAG to the reader");
+    Serial.println("2) To register cards, press any key");
+    Serial.println();
+  } else if (btn_intr) {   // Check if the button is pressed or the password is correct
+    rf.handle_events(&btn);   // Handle events based on button input
+    btn_intr = false;         // Reset button interrupt flag
+    Serial.println();
+    Serial.println("1) To open the door, approach the TAG to the reader");
+    Serial.println("2) To register cards, press any key");
+    Serial.println();
+  } else if (read != NULL) {
+    rf.handle_events(&kb);   // Handle events based on keyboard input
+    Serial.println();
+    Serial.println("1) To open the door, approach the TAG to the reader");
+    Serial.println("2) To register cards, press any key");
+    Serial.println();
+  }
+  
+  // Instruct the PICC when in the ACTIVE state to go to a "stop" state
   rf.reader.PICC_HaltA(); 
-  // "stop" a encriptação do PCD, deve ser chamado após a comunicação com autenticação, caso contrário novas comunicações não poderão ser iniciadas
+  
+  // Stop the encryption of the PCD, should be called after authenticated communication, 
+  // otherwise, new communications cannot be initiated
   rf.reader.PCD_StopCrypto1();
 }

@@ -1,25 +1,26 @@
 #include <Arduino.h>
 #include "../buttons/buttons.hpp"
 
-const int BUTTON_RESET_PIN = 5; 
-
+/* Variable that returns whether the button was pressed */
 volatile bool btn_intr = false;
 
-/* Função de interrupção para o botão */
+/* Interrupt function for the button */
 void handleInterrupt(){
     if(!btn_intr) { 
         btn_intr = true; 
   }
 }
+/* Button initialization function */
 void Button::init(){
-    // Configurando o pino do botão como entrada e ativa a pull-up interna
+    // Configuring the button pin as an input and activating the internal pull-up
     pinMode(BUTTON_RESET_PIN , INPUT);  
-    // Configurando a interrupção externa no pino do botão
+    // Setting the external interrupt on the button pin
     attachInterrupt(digitalPinToInterrupt(BUTTON_RESET_PIN), handleInterrupt, FALLING);
 }
+/* Button action function */
 input Button::take_action() {
     if(btn_intr){
-        delay(100); // aguarda 100ms para evitar rebote do botão
+        delay(100); // wait 100ms to avoid button rebound
         btn_intr =  false;
         return RESET;  
     }

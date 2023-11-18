@@ -1,47 +1,53 @@
 #include <MFRC522.h>
 #include "../rfid/rfid.hpp"
 
-#define SIZE_BUFFER     18
+// Define constants
+#define SIZE_BUFFER 18
 #define SIZE_BUFFER_DEFULT 8
-#define MAX_SIZE_BLOCK  16
-#define LEDG_PIN        4
-#define LEDR_PIN        2
+#define MAX_SIZE_BLOCK 16
+#define LEDG_PIN 4
+#define LEDR_PIN 2
 
-//esse objeto 'chave' é utilizado para autenticação
+// Key object used for authentication
 MFRC522::MIFARE_Key key;
-//código de status de retorno da autenticação
+
+// Authentication status code
 MFRC522::StatusCode status;
 
-void RFID::init(){
-
+// Initialize RFID module
+void RFID::init() {
+    // Set pin modes for LEDs
     pinMode(LEDG_PIN, OUTPUT);
     pinMode(LEDR_PIN, OUTPUT);
-    
-    reader.PCD_Init(); 
-    // Mensagens iniciais no serial monitor
+
+    // Initialize RFID reader
+    reader.PCD_Init();
+
+    // Initial messages on the serial monitor
     Serial.println();
-    Serial.println("1) Para abertura da porta aproxime a TAG do leitor");
+    Serial.println("1) To open the door, approach the TAG to the reader");
     delay(1000);
 }
 
+/* Read to RFID tag*/
 void RFID::read_tag() {
+    // Dump technical details of the card/tag
+    reader.PICC_DumpDetailsToSerial(&(reader.uid));
 
-    //imprime os detalhes tecnicos do cartão/tag
-    reader.PICC_DumpDetailsToSerial(&(reader.uid)); 
-
-    //Prepara a chave - todas as chaves estão configuradas para FFFFFFFFFFFFh (Padrão de fábrica).
+    // Prepare the key - all keys are set to FFFFFFFFFFFFh (Factory default)
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
 
-    //buffer para colocar os dados lidos
+    // Buffer for storing read data
     byte buffer[SIZE_BUFFER] = {0};
 
-    //bloco que faremos a operação
-    byte bloco = 1;
-    byte tamanho = SIZE_BUFFER;
+    // Block to operate on
+    byte block = 1;
+    byte dataSize = SIZE_BUFFER;
 
-    //faz a autenticação do bloco que vamos operar
-    status = reader.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, bloco, &key, &(reader.uid)); //line 834 of MFRC522.cpp file
+    // Authenticate the block
+    status = reader.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(reader.uid));
     if (status != MFRC522::STATUS_OK) {
+        // Authentication failed, print error message and indicate failure
         Serial.print(F("Authentication failed: "));
         Serial.println(reader.GetStatusCodeName(status));
         Serial.println();
@@ -50,159 +56,153 @@ void RFID::read_tag() {
         digitalWrite(LEDR_PIN, LOW);
         return;
     }
-    
 
-    //faz a leitura dos dados do bloco
-    status = reader.MIFARE_Read(bloco, buffer, &tamanho);
-    byte* id = &buffer[0]; 
-    byte right_id[MAX_SIZE_BLOCK] = "spacelab";
-    
-    for(byte i = SIZE_BUFFER_DEFULT; i < MAX_SIZE_BLOCK; i++)
-    {
-        right_id[i] = ' ';
+    // Read data from the block
+    status = reader.MIFARE_Read(block, buffer, &dataSize);
+    byte* id = &buffer[0];
+    byte correctId[MAX_SIZE_BLOCK] = "spacelab";
+
+    // Set default values for the correct ID
+    for (byte i = SIZE_BUFFER_DEFULT; i < MAX_SIZE_BLOCK; i++) {
+        correctId[i] = ' ';
     }
-    bool wrong_id = false;
-    
-    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++){    
-        if(id[i] != right_id[i]){
-            wrong_id = true;
+    bool wrongId = false;
+
+    // Check if the read ID matches the correct ID
+    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
+        if (id[i] != correctId[i]) {
+            wrongId = true;
         }
     }
 
-    if ((status != MFRC522::STATUS_OK) || (wrong_id)) {
-        Serial.println(F("Porta não abriu."));
+    if ((status != MFRC522::STATUS_OK) || (wrongId)) {
+        // Reading failed or incorrect ID, print error message and indicate failure
+        Serial.println(F("Door did not open."));
         Serial.println();
         digitalWrite(LEDR_PIN, HIGH);
         delay(1000);
         digitalWrite(LEDR_PIN, LOW);
-    }
-    else{
-        Serial.print(F("Porta abriu!"));
+    } else {
+        // Door opened successfully, print success message and indicate success
+        Serial.print(F("Door opened!"));
         Serial.println();
         digitalWrite(LEDG_PIN, HIGH);
         delay(1000);
         digitalWrite(LEDG_PIN, LOW);
     }
 
-    Serial.print(F("\nDados bloco ["));
-    Serial.print(bloco);
+    // Print the read data
+    Serial.print(F("\nBlock data ["));
+    Serial.print(block);
     Serial.print(F("]: "));
-
-    //imprime os dados lidos
-    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++)
-    {
+    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
         Serial.write(buffer[i]);
     }
     Serial.println(" ");
     Serial.println();
     return;
-    }
+}
+/* Write to RFID tag*/
+void RFID::write_tag() {
+    // Dump technical details of the card/tag
+    reader.PICC_DumpDetailsToSerial(&(reader.uid));
 
-    void RFID::write_tag() {
-
-    //imprime os detalhes tecnicos do cartão/tag
-    reader.PICC_DumpDetailsToSerial(&(reader.uid)); 
-    // aguarda 30 segundos para entrada de dados via Serial
-    // Serial.setTimeout(30000L) ;     
-    // Serial.println(F("Insira os dados a serem gravados com o caractere '#' ao final\n[máximo de 16 caracteres]:"));
-
-    //Prepara a chave - todas as chaves estão configuradas para FFFFFFFFFFFFh (Padrão de fábrica).
+    // Prepare the key - all keys are set to FFFFFFFFFFFFh (Factory default)
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
 
-    //Prepara a chave - todas as chaves estão configuradas para FFFFFFFFFFFFh (Padrão de fábrica).
-    for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
+    // Buffer for storing data to be written
+    byte buffer[MAX_SIZE_BLOCK] = "spacelab";   //if you change the buffer, remember to change the datasize and correctId
+    byte block; // Block to perform the operation on
+    byte dataSize; // Size of data to operate on (in bytes)
 
-    //buffer para armazenamento dos dados que iremos gravar
-    // byte buffer[MAX_SIZE_BLOCK] = "";
-    byte buffer[MAX_SIZE_BLOCK] = "spacelab";
-    byte bloco; //bloco que desejamos realizar a operação
-    byte tamanhoDados; //tamanho dos dados que vamos operar (em bytes)
+    // Set a default data size for the buffer
+    dataSize = 8; //change the datasize if you change the buffer
 
-    //recupera no buffer os dados que o usuário inserir pela serial
-    //serão todos os dados anteriores ao caractere '#'
-    // tamanhoDados = Serial.readBytesUntil('#', (char*)buffer, MAX_SIZE_BLOCK);
-    tamanhoDados = 8;
-
-    //espaços que sobrarem do buffer são preenchidos com espaço em branco
-    for(byte i=tamanhoDados; i < MAX_SIZE_BLOCK; i++)
-    {
+    // Fill any remaining space in the buffer with whitespace
+    for (byte i = dataSize; i < MAX_SIZE_BLOCK; i++) {
         buffer[i] = ' ';
     }
-    
-    bloco = 1; //bloco definido para operação
-    //String str = (char*)buffer; //transforma os dados em string para imprimir
-    //Serial.println(str);
 
-    //Authenticate é um comando para autenticação para habilitar uma comuinicação segura
-    status = reader.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A,
-                                        bloco, &key, &(reader.uid));
+    // Block defined for the operation
+    block = 1;
+
+    // Authenticate is a command for authentication to enable secure communication
+    status = reader.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(reader.uid));
 
     if (status != MFRC522::STATUS_OK) {
+        // Authentication failed, print error message and indicate failure
         Serial.print(F("PCD_Authenticate() failed: "));
         Serial.println(reader.GetStatusCodeName(status));
         Serial.println();
         delay(1000);
         return;
     }
-    //else Serial.println(F("PCD_Authenticate() success: "));
+    // else Serial.println(F("PCD_Authenticate() success: "));
 
-     byte tamanho = SIZE_BUFFER;
-    //faz a leitura dos dados do bloco
-    status = reader.MIFARE_Read(bloco, buffer, &tamanho);
-    byte* id = &buffer[0]; 
-    byte right_id[MAX_SIZE_BLOCK] = "spacelab";
-    
-    for(byte i = SIZE_BUFFER_DEFULT; i < MAX_SIZE_BLOCK; i++)
-    {
-        right_id[i] = ' ';
+    // Buffer for storing read data
+    byte buffer_read[SIZE_BUFFER] = {0};
+
+    // Read data from the block
+    byte dataSizeRead = SIZE_BUFFER;
+    status = reader.MIFARE_Read(block, buffer_read, &dataSizeRead);
+    byte* id = &buffer_read[0];
+    byte correctId[MAX_SIZE_BLOCK] = "spacelab"; 
+
+    // Set default values for the correct ID
+    for (byte i = SIZE_BUFFER_DEFULT; i < MAX_SIZE_BLOCK; i++) {
+        correctId[i] = ' ';
     }
-    bool equal_id = true;
-    
-    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++){    
-        if(id[i] != right_id[i]){
-            equal_id = false;
+    bool idsMatch = true;
+
+    // Check if the read ID matches the correct ID
+    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
+        if (id[i] != correctId[i]) {
+            idsMatch = false;
         }
     }
-    
-    //Grava no bloco
-    status = reader.MIFARE_Write(bloco, buffer, MAX_SIZE_BLOCK);
+
+    // Write to the block
+    status = reader.MIFARE_Write(block, buffer, MAX_SIZE_BLOCK);
     if (status != MFRC522::STATUS_OK) {
+        // Writing failed, print error message and indicate failure
         Serial.print(F("MIFARE_Write() failed: "));
         Serial.println(reader.GetStatusCodeName(status));
         Serial.println();
         delay(1000);
         return;
-    }
-    else if(!equal_id) {
+    } else if (!idsMatch) {
+        // Writing success and IDs don't match, print success message
         Serial.println(F("MIFARE_Write() success: "));
         Serial.println();
         delay(1000);
-    }
-    else if(equal_id) {
-        Serial.println(F("TAG já cadastrada"));
+    } else if (idsMatch) {
+        // IDs match, indicating that the TAG is already registered
+        Serial.println(F("TAG already registered"));
         Serial.println();
         delay(1000);
     }
 }
-
+/* Function that operates the take_actions according to the action chosen by the user */  
 void RFID::handle_events(Peripherals *btn_or_keyboard) {
-
+    // Get the result of the action from the passed peripheral (button or keyboard)
     input result = btn_or_keyboard->take_action();
 
-    switch (result)
-    {
+    // Handle the result based on the enumerated input
+    switch (result) {
     case RESET:
+        // If the result is a reset action, indicate success, open the door, and wait for a while
         digitalWrite(LEDG_PIN, HIGH);
-        Serial.println("Botão de Reset pressionado. Porta abriu!");
+        Serial.println("Reset button pressed. Door opened!");
         Serial.println();
         delay(1000);
         digitalWrite(LEDG_PIN, LOW);
         delay(1000);
         break;
     case RIGHT_PASS:
-        Serial.println("Iniciando gravação.");
+        // If the result is a correct password, initiate recording mode and prompt the user to bring the RFID tag
+        Serial.println("Initiating recording mode.");
         delay(1000);
-        Serial.println(">>> Aproxime a TAG no leitor em...");
+        Serial.println(">>> Bring the RFID tag near the reader in...");
         Serial.println("3");
         delay(1000);
         Serial.println("2");
@@ -210,25 +210,28 @@ void RFID::handle_events(Peripherals *btn_or_keyboard) {
         Serial.println("1");
         delay(3000);
         Serial.println();
+        // Check if a new RFID card is present and read its serial if available, then write to the card
         if (reader.PICC_IsNewCardPresent() && reader.PICC_ReadCardSerial()) {
             write_tag();
         } 
         delay(3000);
         break;
     case WRONG_PASS:
-        Serial.println("Senha incorreta.");
+        // If the result is an incorrect password, indicate failure, blink the red LED, and wait
+        Serial.println("Incorrect password.");
         Serial.println();
         digitalWrite(LEDR_PIN, HIGH);
         delay(3000);
         digitalWrite(LEDR_PIN, LOW);
         break;
     case NO_INPUT:
+        // If there is no input, indicate that the door did not open, blink the red LED, and wait
         digitalWrite(LEDR_PIN, HIGH);
-        Serial.println("Porta não abriu!");
+        Serial.println("Door did not open!");
         Serial.println();
         delay(1000);
         digitalWrite(LEDR_PIN, LOW);
         delay(1000);
-        return;
+        return; // Exit the function if there is no input
     }
 }
