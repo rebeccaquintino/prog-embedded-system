@@ -1,7 +1,11 @@
+#include <iostream>
+#include <string>
+
 #include <SPI.h>
 #include <MFRC522.h>
 #include <MFRC522Extended.h>
 #include <Arduino.h>
+
 #include "devices/peripherals/keyboard/keyboard.hpp"
 #include "devices/peripherals/buttons/buttons.hpp"
 #include "devices/rfid/rfid.hpp"
@@ -22,13 +26,14 @@ void setup() {
 }
 
 void loop() {
+
   char read = kb.keypad.getKey();  // Read a key from the keyboard
 
   // Check if a new RFID card is present and read its serial if available
   if (rf.reader.PICC_IsNewCardPresent() && rf.reader.PICC_ReadCardSerial()) {
     rf.read_tag();   // Read RFID tag details
+    delay(1000);
     delay(2000);
-    Serial.println();
     Serial.println("1) To open the door, approach the TAG to the reader");
     Serial.println("2) To register cards, press any key");
     Serial.println();
