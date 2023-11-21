@@ -181,6 +181,7 @@ void RFID::write_tag() {
         delay(1000);
     }
 }
+
 /* Function that operates the take_actions according to the action chosen by the user */  
 void RFID::handle_events(Peripherals *btn_or_keyboard) {
     // Get the result of the action from the passed peripheral (button or keyboard)

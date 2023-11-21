@@ -3,6 +3,7 @@
 #include "../peripherals.hpp"
 
 /* Keyboard class */
+
 class Keyboard : public Peripherals {
 private:
     // Pins for columns and rows of the keypad
@@ -21,7 +22,7 @@ public:
     // Keypad object for handling input
     Keypad keypad = Keypad(makeKeymap(keys), ROW_PIN, COL_PIN, 4, 4);
     // Function to initialize the keyboard
-    void init() override;
+    friend void init_keyboard(Keyboard& keyboard);
     // Function to take an action based on keyboard input
     input take_action() override;
 };

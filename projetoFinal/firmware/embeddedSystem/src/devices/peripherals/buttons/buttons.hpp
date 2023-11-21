@@ -11,6 +11,6 @@ class Button: public Peripherals {
         const int BUTTON_RESET_PIN = 5; 
     public:
         int interrupt;
-        void init() override;
-        input take_action() override;        
+        friend void init_button(Button& button);
+        input take_action() override;     
 };

@@ -4,7 +4,7 @@
 #include "../peripherals.hpp"
 
 /* Keyboard initialization function */
-void Keyboard::init(){
+void init_keyboard(Keyboard& keyboard){
   Serial.println("2) To register cards, press any key");
   Serial.println();
   delay(1000);

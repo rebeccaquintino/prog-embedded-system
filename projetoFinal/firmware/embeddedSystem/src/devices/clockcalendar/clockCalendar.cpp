@@ -1,6 +1,3 @@
-#include <iostream>
-#include <string>
-
 #include "../clockCalendar/clockCalendar.hpp"
 
 // Initialization function
@@ -35,7 +32,7 @@ void ClockCalendar::init() {
 }
 
 // Constructor for the ClockCalendar class
-void ClockCalendar::clockCalendar() {
+std::string ClockCalendar::now() {
     // Create a struct to store time information
     struct tm tmstruct;
     tmstruct.tm_year = 0; // Initialize year to 0
@@ -43,15 +40,11 @@ void ClockCalendar::clockCalendar() {
     getLocalTime(&tmstruct);
     // Formatting and printing date and time
     // Convert year, month, and day to a string in the format "YYYY-MM-DD"
-    String date = String((tmstruct.tm_year) + 1900) + "-" + String((tmstruct.tm_mon) + 1) + "-" + String(tmstruct.tm_mday);
-    // Convert hour, minute, and second to a string in the format "HH:MM:SS"
-    String hour = String(tmstruct.tm_hour) + ":" + String(tmstruct.tm_min) + ":" + String(tmstruct.tm_sec);
+    std::string clockCalendar = "Date: " + std::to_string((tmstruct.tm_year) + 1900) + "-" + std::to_string((tmstruct.tm_mon) + 1) + "-" + std::to_string(tmstruct.tm_mday) + " - Time: " + std::to_string(tmstruct.tm_hour) + ":" + std::to_string(tmstruct.tm_min) + ":" + std::to_string(tmstruct.tm_sec);
     // Print the formatted date and time
-    //Serial.println("Date: " + date + " - Time: " + hour);
-    std::cout << "Date: " << std::endl;
-    std::cout << date << std::endl;
-    std::cout << " - Time: " << std::endl;
-    std::cout << hour << std::endl;
+    std::cout << clockCalendar << std::endl;
     // Introduce a delay of 1000 milliseconds (1 second)
     delay(1000);
+
+    return clockCalendar;
 }

@@ -11,6 +11,6 @@ enum input{
 // Abstract base class representing peripherals
 class Peripherals {
     public:
-        virtual void init() = 0;   // Pure virtual function for initializing peripherals
+        //virtual void init() = 0;   // Pure virtual function for initializing peripherals
         virtual input take_action() = 0;   // Pure virtual function for taking an action and returning the input
 };

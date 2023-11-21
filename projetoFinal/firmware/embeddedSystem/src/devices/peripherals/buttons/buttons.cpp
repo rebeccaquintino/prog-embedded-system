@@ -11,11 +11,11 @@ void handleInterrupt(){
   }
 }
 /* Button initialization function */
-void Button::init(){
+void init_button(Button& button){
     // Configuring the button pin as an input and activating the internal pull-up
-    pinMode(BUTTON_RESET_PIN , INPUT);  
+    pinMode(button.BUTTON_RESET_PIN , INPUT);  
     // Setting the external interrupt on the button pin
-    attachInterrupt(digitalPinToInterrupt(BUTTON_RESET_PIN), handleInterrupt, FALLING);
+    attachInterrupt(digitalPinToInterrupt(button.BUTTON_RESET_PIN), handleInterrupt, FALLING);
 }
 /* Button action function */
 input Button::take_action() {
