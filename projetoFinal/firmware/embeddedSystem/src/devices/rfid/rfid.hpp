@@ -1,6 +1,12 @@
 #pragma once
 #include <MFRC522.h>
+#include <iostream>
+#include <string>
+#include <cstring>
+#include <iomanip>
+#include <sstream>
 #include "devices/peripherals/peripherals.hpp"
+#include "devices/queue/queue.hpp"
 
 // Define the SS_PIN and RST_PIN for the RFID module
 #define SS_PIN 21
@@ -9,6 +15,7 @@
 /* RFID class */
 class RFID {
 public:
+    std::string log_label;
     // RFID reader object
     MFRC522 reader;
     // Constructor for initializing the RFID reader

@@ -48,17 +48,34 @@ void Queue::printLog() {
 
   // Check if the queue is empty
   if (first == 0) {
-    std::cout << "No access" << std::endl;
     return;
   }
 
-  std::cout << " " << std::endl;
-  std::cout << "---------- Access allowed log -------------" << std::endl;
+  //std::cout << " " << std::endl;
+  //std::cout << "---------- Log -------------" << std::endl;
 
   // Traverse the linked list and print each log
   while (aux1 != 0) {
     std::string aux2 = aux1->getLog(); // Get the log from the current node
-    std::cout << aux2 << std::endl; // Print the log
+    const std::string& data = aux2;
+    const char* dataChar = data.c_str();
+    
+    // Check the length of the string
+    if (strlen(dataChar) < 82) {
+        // If the length is less than 82, create a new char array with a length of 82
+        // and copy the content of dataChar into it. The remaining bytes are filled with spaces.
+        char result[82]; // +1 for the null terminator
+        strcpy(result, dataChar);
+        // Calculate the number of spaces needed to fill up to 83 bytes
+        size_t numSpaces = 82 - strlen(dataChar);
+        // Fill the remaining bytes with spaces
+        std::memset(result + strlen(dataChar), ' ', numSpaces);
+        // result now contains the desired string with a total length of 83 bytes
+    }
+
+    Serial.println(dataChar);
+
+    //std::cout << aux2 << std::endl; // Print the log
     aux1 = aux1->getNext(); // Move to the next node
   }
   // Destroys the Queue after printing to the log console

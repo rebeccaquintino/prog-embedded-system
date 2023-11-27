@@ -1,0 +1,6 @@
+Date: 2023-11-25 - Time: 18:0:201 - UID: e24b4b1a000000000000 - Status: no entry
+Date: 2023-11-25 - Time: 18:0:252 - UID: 41e88027000000000000 - Status: entry   
+Date: 2023-11-25 - Time: 18:0:303 - UID: e24b4b1a000000000000 - Status: no entry
+Date: 2023-11-25 - Time: 18:0:354 - UID: 41e88027000000000000 - Status: entry   
+Date: 2023-11-25 - Time: 18:0:405 - UID: e24b4b1a000000000000 - Status: no entry
+Date: 2023-11-25 - Time: 18:0:456 - UID: e24b4b1a000000000000 - Status: no entry

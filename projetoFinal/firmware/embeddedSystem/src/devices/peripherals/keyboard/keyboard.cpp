@@ -5,9 +5,7 @@
 
 /* Keyboard initialization function */
 void init_keyboard(Keyboard& keyboard){
-  Serial.println("2) To register cards, press any key");
-  Serial.println();
-  delay(1000);
+  //std::cout << "2) To register cards, press any key" << '\n' << std::endl;
 }
 /* Keyboard action function */
 input Keyboard::take_action() { 
@@ -17,8 +15,7 @@ input Keyboard::take_action() {
   int counter = 0;
   // Display message to enter registration password after a delay
   delay(500);
-  Serial.println(">>> Enter your registration password");
-  Serial.println();
+  //std::cout << ">>> Enter your registration password" << '\n' << std::endl;
   // Loop to read 4 keys from the keypad
   while(counter < 4){
     char key = keypad.getKey();

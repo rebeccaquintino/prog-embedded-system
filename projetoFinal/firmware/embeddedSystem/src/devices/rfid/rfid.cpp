@@ -1,4 +1,3 @@
-#include <MFRC522.h>
 #include "../rfid/rfid.hpp"
 
 // Define constants
@@ -24,15 +23,14 @@ void RFID::init() {
     reader.PCD_Init();
 
     // Initial messages on the serial monitor
-    Serial.println();
-    Serial.println("1) To open the door, approach the TAG to the reader");
-    delay(1000);
+    //Serial.println();
+    //Serial.println("1) To open the door, approach the TAG to the reader");
 }
 
 /* Read to RFID tag*/
 void RFID::read_tag() {
     // Dump technical details of the card/tag
-    reader.PICC_DumpDetailsToSerial(&(reader.uid));
+    //reader.PICC_DumpDetailsToSerial(&(reader.uid));
 
     // Prepare the key - all keys are set to FFFFFFFFFFFFh (Factory default)
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
@@ -48,11 +46,11 @@ void RFID::read_tag() {
     status = reader.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(reader.uid));
     if (status != MFRC522::STATUS_OK) {
         // Authentication failed, print error message and indicate failure
-        Serial.print(F("Authentication failed: "));
-        Serial.println(reader.GetStatusCodeName(status));
-        Serial.println();
+        //Serial.print(F("Authentication failed: "));
+        //Serial.println(reader.GetStatusCodeName(status));
+        //Serial.println();
         digitalWrite(LEDR_PIN, HIGH);
-        delay(1000);
+        delay(2000);
         digitalWrite(LEDR_PIN, LOW);
         return;
     }
@@ -77,34 +75,39 @@ void RFID::read_tag() {
 
     if ((status != MFRC522::STATUS_OK) || (wrongId)) {
         // Reading failed or incorrect ID, print error message and indicate failure
-        Serial.println(F("Door did not open."));
+        //Serial.println(F("Door did not open."));
         digitalWrite(LEDR_PIN, HIGH);
-        delay(1000);
+        delay(2000);
         digitalWrite(LEDR_PIN, LOW);
+
+        log_label = " no entry";
+
     } else {
         // Door opened successfully, print success message and indicate success
-        Serial.print(F("Door opened!"));
-        Serial.println();
+        //Serial.print(F("Door opened!"));
+        //Serial.println();
         digitalWrite(LEDG_PIN, HIGH);
-        delay(1000);
+        delay(2000);
         digitalWrite(LEDG_PIN, LOW);
+        
+        log_label = " entry   ";
     }
 
     // Print the read data
-    Serial.print(F("\nBlock data ["));
-    Serial.print(block);
-    Serial.print(F("]: "));
-    for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
-        Serial.write(buffer[i]);
-    }
-    Serial.println(" ");
-    Serial.println();
+    //Serial.print(F("\nBlock data ["));
+    //Serial.print(block);
+    //Serial.print(F("]: "));
+    //for (uint8_t i = 0; i < MAX_SIZE_BLOCK; i++) {
+        //Serial.write(buffer[i]);
+    //}
+    //Serial.println(" ");
+    //Serial.println();
     return;
 }
 /* Write to RFID tag*/
 void RFID::write_tag() {
     // Dump technical details of the card/tag
-    reader.PICC_DumpDetailsToSerial(&(reader.uid));
+    //reader.PICC_DumpDetailsToSerial(&(reader.uid));
 
     // Prepare the key - all keys are set to FFFFFFFFFFFFh (Factory default)
     for (byte i = 0; i < 6; i++) key.keyByte[i] = 0xFF;
@@ -130,10 +133,10 @@ void RFID::write_tag() {
 
     if (status != MFRC522::STATUS_OK) {
         // Authentication failed, print error message and indicate failure
-        Serial.print(F("PCD_Authenticate() failed: "));
-        Serial.println(reader.GetStatusCodeName(status));
-        Serial.println();
-        delay(1000);
+        //Serial.print(F("PCD_Authenticate() failed: "));
+        //Serial.println(reader.GetStatusCodeName(status));
+        //Serial.println();
+        delay(500);
         return;
     }
     // else Serial.println(F("PCD_Authenticate() success: "));
@@ -164,21 +167,21 @@ void RFID::write_tag() {
     status = reader.MIFARE_Write(block, buffer, MAX_SIZE_BLOCK);
     if (status != MFRC522::STATUS_OK) {
         // Writing failed, print error message and indicate failure
-        Serial.print(F("MIFARE_Write() failed: "));
-        Serial.println(reader.GetStatusCodeName(status));
-        Serial.println();
-        delay(1000);
+        //Serial.print(F("MIFARE_Write() failed: "));
+        //Serial.println(reader.GetStatusCodeName(status));
+        //Serial.println();
+        delay(500);
         return;
     } else if (!idsMatch) {
         // Writing success and IDs don't match, print success message
-        Serial.println(F("MIFARE_Write() success: "));
-        Serial.println();
-        delay(1000);
+        //Serial.println(F("MIFARE_Write() success: "));
+        //Serial.println();
+        delay(500);
     } else if (idsMatch) {
         // IDs match, indicating that the TAG is already registered
-        Serial.println(F("TAG already registered"));
-        Serial.println();
-        delay(1000);
+        //Serial.println(F("TAG already registered"));
+        //Serial.println();
+        delay(500);
     }
 }
 
@@ -192,46 +195,50 @@ void RFID::handle_events(Peripherals *btn_or_keyboard) {
     case RESET:
         // If the result is a reset action, indicate success, open the door, and wait for a while
         digitalWrite(LEDG_PIN, HIGH);
-        Serial.println("Reset button pressed. Door opened!");
-        Serial.println();
+        //Serial.println("Reset button pressed. Door opened!");
+        //Serial.println();
         delay(1000);
         digitalWrite(LEDG_PIN, LOW);
-        delay(1000);
+        log_label = " exit";         
         break;
     case RIGHT_PASS:
         // If the result is a correct password, initiate recording mode and prompt the user to bring the RFID tag
-        Serial.println("Initiating recording mode.");
+        //Serial.println("Initiating recording mode.");
         delay(1000);
-        Serial.println(">>> Bring the RFID tag near the reader in...");
-        Serial.println("3");
+        //Serial.println(">>> Bring the RFID tag near the reader in...");
+        //Serial.println("3");
         delay(1000);
-        Serial.println("2");
+        //Serial.println("2");
         delay(1000);
-        Serial.println("1");
+        //Serial.println("1");
         delay(3000);
-        Serial.println();
+
+        digitalWrite(LEDG_PIN, HIGH);
+        delay(500);
+        digitalWrite(LEDG_PIN, LOW);
+
+        //Serial.println();
         // Check if a new RFID card is present and read its serial if available, then write to the card
         if (reader.PICC_IsNewCardPresent() && reader.PICC_ReadCardSerial()) {
             write_tag();
-        } 
-        delay(3000);
+        }
         break;
     case WRONG_PASS:
         // If the result is an incorrect password, indicate failure, blink the red LED, and wait
-        Serial.println("Incorrect password.");
-        Serial.println();
+        //Serial.println("Incorrect password.");
+        //Serial.println();
         digitalWrite(LEDR_PIN, HIGH);
-        delay(3000);
+        delay(500);
         digitalWrite(LEDR_PIN, LOW);
         break;
     case NO_INPUT:
         // If there is no input, indicate that the door did not open, blink the red LED, and wait
         digitalWrite(LEDR_PIN, HIGH);
-        Serial.println("Door did not open!");
-        Serial.println();
+        //Serial.println("Door did not open!");
+        //Serial.println();
         delay(1000);
         digitalWrite(LEDR_PIN, LOW);
-        delay(1000);
+        log_label = " no input";
         return; // Exit the function if there is no input
     }
 }

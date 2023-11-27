@@ -22,4 +22,6 @@ public:
     ~Queue();        // Destructor
     void insert(std::string); // Function to insert an element into the queue
     void printLog();  // Function to print the elements in the queue
+    void init_uart();
 };
+    
