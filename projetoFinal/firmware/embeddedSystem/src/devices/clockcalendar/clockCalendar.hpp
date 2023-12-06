@@ -10,8 +10,8 @@
 /* ClockCalendar class */
 class ClockCalendar {
     protected:
-        const char *ssid = "SSID-wifi";     // Replace with your WiFi SSID
-        const char *password = "password"; // Replace with your WiFi password
+        const char *ssid = "your-wifi-SSID";     // Replace with your WiFi SSID
+        const char *password = "your-wifi-password."; // Replace with your WiFi password
     public:
         long timezone = -3; // Replace with your timezone offset in hours
         byte daysavetime = 1; // Daylight Saving Time (DST) offset in hours
